@@ -8,6 +8,7 @@ This CBOW is a little different from trainditional one. I use a convolution moud
 
 
 #########################   Description   ###########################
+
 main.py
 
 export_embed.py: export embeddings from the model
