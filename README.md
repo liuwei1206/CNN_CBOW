@@ -9,8 +9,11 @@ This CBOW is a little different from trainditional one. I use a convolution moud
 
 #########################   Description   ###########################
 main.py
+
 export_embed.py: export embeddings from the model
+
 data: the data files
+
 cn_cove: the main code of the model
 
 
