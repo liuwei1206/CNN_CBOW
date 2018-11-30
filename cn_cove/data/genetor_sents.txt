@@ -1,0 +1,100 @@
+__author__ = "liuwei"
+
+"""
+process the raw corpus, and transform it to sents. of course we need remove
+the no chinese character words.include digit, and no chinese words
+"""
+
+import os
+import re
+import numpy as np
+
+import jieba as jb
+from bosonnlp import BosonNLP
+
+nlp = BosonNLP('lGUAsIiH.17409.-5A42DCLNtS3')
+
+def remove_punctuation(line):
+    """
+    preporcess single sents.include remove the abnormal chinese text,
+    and chinese word segmentation
+    Args:
+        sent: the sent need to be propecess
+    """
+    p1 = re.compile(r"-\{.*?(zh-hans|zh-cn):([^;]*?)(;.*?)?\}-")
+    p2 = re.compile(r"[（\(][，；。？！\s]*[）\)]")
+    p3 = re.compile(r"[「『]")
+    p4 = re.compile(r"[」』]")
+
+    line = p1.sub(r'\2', line)
+    line = p2.sub(r'', line)
+    line = p3.sub(r'“', line)
+    line = p4.sub('”', line)
+
+    return line
+
+def cut_sent(sent, cut_type=0):
+    """
+    cut the sent to words
+    Args:
+        sent: the sent need to be cut
+        cut_type: use what type tool to cut sent
+    """
+    new_sent = ' '.join(jb.cut(sent))
+
+    return new_sent
+
+def cut_sent_boson(sents):
+    result = nlp.tag(sents)
+
+    new_sents = []
+    for d in result:
+        new_sent = ' '.join(['%s' % it for it in d['word']])
+        new_sents.append(new_sent)
+    return new_sents
+
+def create_sents(data_dir, new_data_dir, min_len):
+    """
+    read all the raw corpus files, and transform it to sentents
+    Args:
+        data_dir: the corpus dir
+        min_len: the min_len of the sents
+    """
+    corpus_files = os.listdir(data_dir)
+    i = 0
+    for file in corpus_files:
+        with open(data_dir + '/' + file, 'r') as f:
+            lines = f.readlines()
+
+            now_sents = []
+            sents = []
+            for line in lines:
+                line = line.strip()
+
+                if line.startswith('<'):
+                    continue
+                elif len(line) < min_len:
+                    continue
+                else:
+                    line = remove_punctuation(line)
+                    line = cut_sent(line)
+                    sents.append(line)
+
+            with open(new_data_dir + '/' + 'zh_wiki_sents' + str(i+1), 'w') as wf:
+                for sent in sents:
+                    wf.write(sent + '\n')
+        i += 1
+
+
+
+
+'''
+                    if len(now_sents) % 100 == 0:
+                        now_sents = cut_sent_boson(now_sents)
+                        sents.extend(now_sents)
+                        now_sents = []
+                    #sents.append(line)
+            if len(now_sents) > 0:
+                now_sents = cut_sent_boson(now_sents)
+                sents.extend(now_sents)
+'''
