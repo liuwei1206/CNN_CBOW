@@ -1,7 +1,9 @@
 # CNN_CBOW
-The implement of CBOW based on pytorch. 
+This is an implementation of CBOW using Pytorch.
 
-This CBOW is a little different from trainditional one. I use a convolution moudle to get the representation of context instead of average.
+This implementation is a little different from the trainditional one. In the original version of CBOW, context was defined as the average embeddings of words around the central token. Here, I use a **convolution moudle** over around words to get the representation of context.
+
+Here are some examples to show the quality of our trained embeddings (Sorry, you need to know Chinese :)).
 
 ![image](https://github.com/liuwei1206/CNN_CBOW/blob/master/images/result.png)
 
